@@ -49,4 +49,8 @@ templates 目录：该目录用于存储模板文件。模板文件通常包括 
     vue项目通过build打包的dist。
   其中的index.html文件移动到templates下面，其他的css和js移动到static下面。
   并且修改index.html引入的css和js的路径，添加/static
-``` 
+  ``` 
+
+
+#### 模块
+* go get github.com/dgrijalva/jwt-go

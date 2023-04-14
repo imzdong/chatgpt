@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chatgpt/api"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -16,18 +17,39 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", indexHandler)
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	//http.HandleFunc("/", indexHandler)
+	//fs := http.FileServer(http.Dir("static"))
+	//http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.HandleFunc("/chat/login", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			// 设置跨域访问权限
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			data := []byte("Hello, world!")
+			w.Write(data)
+		} else {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			// 处理 Login 请求
+			api.LoginHandler(w, r)
+		}
+	})
 	// 添加路由信息
-	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-		// 设置跨域访问权限
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	http.HandleFunc("/chat/*", func(w http.ResponseWriter, r *http.Request) {
 
-		// 处理 API 请求
-		fmt.Fprint(w, "Hello, API!")
+		if r.Method == "OPTIONS" {
+			// 设置跨域访问权限
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			data := []byte("Hello, world!")
+			w.Write(data)
+		} else {
+			api.ProtectedHandler(w, r)
+		}
+
 	})
 
 	fmt.Println("Listening on :8086...")
